@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .big {
+            margin: 100px auto;
+            width: 310px;
+            height: 240px;
+            overflow: hidden;
+        }
+
+        .top {
+            height: 220px;
+            width: 310px;
+            position: relative;
+        }
+
+        .image {
+            position: absolute;
+            width: 310px;
+        }
+
+        img {
+            position: absolute;
+            width: 310px;
+            left: -310px;
+            top: 0;
+        }
+
+        .bottom {
+            position: relative;
+            width: 310px;
+            height: 20px;
+        }
+
+        li {
+            list-style: none;
+            position: absolute;
+            text-indent: -9999px;
+            width: 30px;
+            height: 36px;
+            background: red;
+            z-Index: 10;
+            cursor: pointer
+        }
+    </style>
+</head>
+<body>
+<div class="big" id="big">
+    <div class="top" id="top">
+        <div class="image" id="image">
+
+        </div>
+    </div>
+    <div class="bottom" id="bottom">
+
+    </div>
+</div>
+</body>
+<script src="js/jquery-3.1.1.min.js"></script>
+<script>
+    $(function () {
+        var oTop = $("#top");
+        var oImage = $("#image");
+        var oBottom = $("#bottom");
+        var oUl = $("<ul></ul>");
+        oBottom.append(oUl);
+        for (var i = 0; i < 6; i++) {
+            var s = "<a href=\"#\"><img src=\"images/" + (i + 1) + ".jpg\" alt=\"\"></a> ";
+            var img = $(s);
+            oImage.append(img);
+        }
+        var oImg = $("img");
+        $(oImg[0]).css({
+            left: 0
+        })
+        for (var j = 0; j < oImg.length + 2; j++) {
+            var oLi = $("<li></li>");
+            oLi.index = j;
+            oUl.append(oLi);
+            oLi.html(j);
+            if (oLi.index == 0) {
+                oLi.css({
+                    top: "-120px",
+                    left: "5px",
+                    background: "url(images/icon.png)"
+                })
+            } else if (oLi.index == oImg.length + 1) {
+                oLi.css({
+                    top: "-120px",
+                    right: "5px",
+                    background: "url(images/icon.png) no-repeat 0px -44px"
+                })
+            } else {
+                var left = 56 + (j - 1) * 36 + "px";
+                oLi.css({
+                    width: "24px",
+                    height: "6px",
+                    top: "13px",
+                    left: left,
+                    background: "url(images/icon.png) no-repeat -24px -790px"
+                })
+            }
+        }
+        var oLi_all = $("li");
+        var iNow = 0;
+        for (var item = 0; item < oLi_all.length; item++) {
+            $(oLi_all[item]).on("click",function () {
+                var n = $(this).html();
+                if (n == 0) {
+                    $(oImg[iNow]).animate({
+                        left:"310px"
+                    },300);
+                    --iNow < 0 ? iNow = oImg.length-1:iNow;
+                    $(oImg[iNow]).css({
+                        left:"-310px"
+                    });
+                    $(oImg[iNow]).animate({
+                        left:"0px"
+                    },300);
+                } else if (n == 7) {
+                    $(oImg[iNow]).animate({
+                        left:"-310px"
+                    },300);
+                    ++iNow > oImg.length-1 ? iNow = 0:iNow;
+                    $(oImg[iNow]).css({
+                        left:"310px"
+                    });
+                    $(oImg[iNow]).animate({
+                        left:"0px"
+                    },300);
+                } else {
+                    var that = n - 1;
+                    if(iNow>that){
+                        $(oImg[iNow]).animate({
+                            left:"-310px"
+                        });
+                        $(oImg[that]).css({
+                            left:"310px"
+                        });
+                    }else if(iNow<that){
+                        $(oImg[iNow]).animate({
+                            left:"310px"
+                        });
+                        $(oImg[that]).css({
+                            left:"-310px"
+                        });
+                    }
+                    iNow = that;
+                    $(oImg[that]).animate({
+                        left:"0px"
+                    });
+                }
+            })
+
+        }
+        var timer = null;
+        timer = setInterval(autoplay,2000);
+
+        function autoplay() {
+            $(oImg[iNow]).animate({
+                left:"-310px"
+            },300);
+            ++iNow > oImg.length-1 ? iNow = 0:iNow;
+            $(oImg[iNow]).css({
+                left:"310px"
+            });
+            $(oImg[iNow]).animate({
+                left:"0px"
+            },300);
+        }
+        $("#big").on("mouseenter",function () {
+            clearInterval(timer);
+        });
+        $("#big").on("mouseleave",function () {
+            clearInterval(timer);
+            timer = setInterval(autoplay,2000);
+        })
+    })
+</script>
+</html>
